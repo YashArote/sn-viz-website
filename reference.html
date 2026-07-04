@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SN-Viz DSL Reference</title>
+  <meta name="description"
+    content="Complete reference for the SN-Viz pipe-delimited query DSL. All parameters, values, chart types and examples.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --bg: #0A0A0F;
+      --bg-alt: #12121A;
+      --muted: #1A1A24;
+      --muted-fg: #71717A;
+      --fg: #FAFAFA;
+      --accent: #F59E0B;
+      --accent-fg: #0A0A0F;
+      --accent-dim: rgba(245, 158, 11, 0.12);
+      --accent-border: rgba(245, 158, 11, 0.22);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --card: rgba(26, 26, 36, 0.62);
+      --r-sm: 6px;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-xl: 16px;
+      --font-d: 'Space Grotesk', system-ui, sans-serif;
+      --font-b: 'Inter', system-ui, sans-serif;
+      --font-m: 'JetBrains Mono', 'Fira Code', monospace;
+      --blue: #60A5FA;
+      --green: #34D399;
+      --pink: #F472B6;
+      --purple: #A78BFA;
+      --red: #F87171;
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-b);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased
+    }
+
+    .ambient-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(100px)
+    }
+
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.04) 0%, transparent 70%);
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%)
+    }
+
+    /* Nav */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(10, 10, 15, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg)
+    }
+
+    .nav-logo img {
+      height: 120px;
+      width: auto
+    }
+
+    .nav-back {
+      color: var(--muted-fg);
+      text-decoration: none;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s
+    }
+
+    .nav-back:hover {
+      color: var(--accent)
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 20px;
+      align-items: center
+    }
+
+    .nav-right a {
+      color: var(--muted-fg);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color .2s
+    }
+
+    .nav-right a:hover {
+      color: var(--fg)
+    }
+
+    /* Layout */
+    .page-wrap {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: calc(100vh - 56px)
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      padding: 32px 0;
+      border-right: 1px solid var(--border);
+      background: var(--bg-alt)
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .1);
+      border-radius: 2px
+    }
+
+    .sidebar-section {
+      margin-bottom: 6px
+    }
+
+    .sidebar-head {
+      padding: 8px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted-fg)
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--muted-fg);
+      text-decoration: none;
+      transition: all .15s;
+      border-left: 2px solid transparent
+    }
+
+    .sidebar a:hover {
+      color: var(--fg);
+      background: rgba(255, 255, 255, .03)
+    }
+
+    .sidebar a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: var(--accent-dim)
+    }
+
+    .content {
+      padding: 56px 64px 120px;
+      max-width: 860px
+    }
+
+    /* Sections */
+    .ref-section {
+      margin-bottom: 72px;
+      scroll-margin-top: 72px
+    }
+
+    .section-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px
+    }
+
+    h2 {
+      font-family: var(--font-d);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 16px
+    }
+
+    h3 {
+      font-family: var(--font-d);
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-top: 32px
+    }
+
+    h4 {
+      font-family: var(--font-d);
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent)
+    }
+
+    p {
+      color: var(--muted-fg);
+      margin-bottom: 14px;
+      line-height: 1.75
+    }
+
+    p strong {
+      color: var(--fg)
+    }
+
+    .inline-code {
+      font-family: var(--font-m);
+      color: var(--accent);
+      font-size: .9em;
+      background: rgba(245, 158, 11, .08);
+      padding: 1px 5px;
+      border-radius: 3px
+    }
+
+    /* Param table */
+    .param-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0 32px;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      border: 1px solid var(--border)
+    }
+
+    .param-table thead {
+      background: rgba(26, 26, 36, .9)
+    }
+
+    .param-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted-fg);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .param-table th:first-child {
+      color: var(--accent)
+    }
+
+    .param-table td {
+      padding: 13px 16px;
+      font-size: 13.5px;
+      border-bottom: 1px solid rgba(255, 255, 255, .04)
+    }
+
+    .param-table tbody tr:last-child td {
+      border-bottom: none
+    }
+
+    .param-table tbody tr:hover td {
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .param-table .mono {
+      font-family: var(--font-m);
+      color: var(--accent);
+      font-size: 13px
+    }
+
+    .param-table .vals {
+      font-family: var(--font-m);
+      font-size: 12px;
+      color: var(--blue)
+    }
+
+    .param-table .desc {
+      color: var(--muted-fg);
+      font-size: 13px
+    }
+
+    .req-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(248, 113, 113, .15);
+      color: var(--red);
+      vertical-align: middle;
+      margin-left: 6px
+    }
+
+    .opt-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(52, 211, 153, .1);
+      color: var(--green);
+      vertical-align: middle;
+      margin-left: 6px
+    }
+
+    /* Code blocks */
+    .code-block {
+      background: rgba(0, 0, 0, .5);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 20px 24px;
+      font-family: var(--font-m);
+      font-size: 13px;
+      line-height: 1.9;
+      margin: 16px 0;
+      overflow-x: auto;
+      position: relative;
+      white-space: pre-wrap
+    }
+
+    .code-block .kw {
+      color: var(--accent)
+    }
+
+    .code-block .val {
+      color: var(--blue)
+    }
+
+    .code-block .op {
+      color: var(--muted-fg)
+    }
+
+    .code-block .cm {
+      color: var(--green);
+      font-style: italic
+    }
+
+    .no-lig {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "calt" 0;
+    }
+
+    .example-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted-fg);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 6px;
+      margin-top: 28px
+    }
+
+    /* Chart type grid */
+    .viz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 20px 0 32px
+    }
+
+    .viz-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 18px;
+      transition: all .2s
+    }
+
+    .viz-card:hover {
+      border-color: var(--accent-border);
+      background: rgba(26, 26, 36, .9)
+    }
+
+    .viz-card .vc-name {
+      font-family: var(--font-m);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px
+    }
+
+    .viz-card .vc-key {
+      font-family: var(--font-m);
+      font-size: 11px;
+      color: var(--muted-fg);
+      margin-bottom: 8px
+    }
+
+    .viz-card .vc-desc {
+      font-size: 12px;
+      color: var(--muted-fg);
+      line-height: 1.5
+    }
+
+    /* Alerts */
+    .alert {
+      border-radius: var(--r-lg);
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 13.5px;
+      line-height: 1.65;
+      border: 1px solid
+    }
+
+    .alert-tip {
+      background: rgba(52, 211, 153, .07);
+      border-color: rgba(52, 211, 153, .2);
+      color: #A7F3D0
+    }
+
+    .alert-note {
+      background: rgba(96, 165, 250, .07);
+      border-color: rgba(96, 165, 250, .2);
+      color: #BFDBFE
+    }
+
+    .alert-warn {
+      background: rgba(245, 158, 11, .07);
+      border-color: var(--accent-border);
+      color: #FDE68A
+    }
+
+    .alert strong {
+      color: var(--fg)
+    }
+
+    /* Bucket syntax */
+    .bucket-examples {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0
+    }
+
+    .bucket-ex {
+      background: rgba(0, 0, 0, .4);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      font-family: var(--font-m);
+      font-size: 12.5px;
+      color: var(--blue)
+    }
+
+    .bucket-ex small {
+      display: block;
+      font-family: var(--font-b);
+      color: var(--muted-fg);
+      font-size: 11px;
+      margin-top: 4px
+    }
+
+    /* Having */
+    .having-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px
+    }
+
+    .having-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, .05)
+    }
+
+    .having-table td:first-child {
+      font-family: var(--font-m);
+      color: var(--accent);
+      white-space: nowrap
+    }
+
+    .having-table td:last-child {
+      color: var(--muted-fg)
+    }
+
+    /* Divider */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0
+    }
+
+    /* Responsive */
+    @media(max-width:800px) {
+      .page-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        display: none
+      }
+
+      .content {
+        padding: 32px 20px 80px
+      }
+
+      .bucket-examples {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient-orb orb-1"></div>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-left">
+      <a href="index.html" class="nav-back">&#x2190; Back</a>
+      <div class="sep"></div>
+      <a href="index.html" class="nav-logo">
+        <img src="images/logo/SN-Viz-Logo.png" alt="SN-Viz">
+      </a>
+      <span style="color:var(--muted-fg);font-size:13px">/ DSL Reference</span>
+    </div>
+    <!-- <div class="nav-right">
+      <a href="snviz.html">Open App</a>
+    </div> -->
+  </nav>
+
+  <div class="page-wrap">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-head">Overview</div>
+        <a href="#overview">Syntax Overview</a>
+        <a href="#anatomy">Query Anatomy</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-head">Parameters</div>
+        <a href="#param-table">All Parameters</a>
+        <a href="#param-table">table=</a>
+        <a href="#param-filter">filter=</a>
+        <a href="#param-stat">stat=</a>
+        <a href="#param-by">by= / by2=</a>
+        <a href="#param-trend">trend=</a>
+        <a href="#param-bucket">bucket=</a>
+        <a href="#param-viz">viz=</a>
+        <a href="#param-sort">sort=</a>
+        <a href="#param-limit">limit= / limit2=</a>
+        <a href="#param-target">target=</a>
+        <a href="#param-having">having=</a>
+        <a href="#param-label">label=</a>
+        <a href="#param-drilldown">drilldown=</a>
+        <a href="#param-dates">from= / to= / datefield=</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-head">Chart Types</div>
+        <a href="#viz-types">All Chart Types</a>
+        <a href="#viz-auto">Auto-detection</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-head">Advanced</div>
+        <a href="#advanced-having">HAVING Filters</a>
+        <a href="#advanced-bucket">Bucket Ranges</a>
+        <a href="#advanced-dotwalk">Dot-walking</a>
+        <a href="#advanced-2d">2D Charts (by2=)</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-head">Examples</div>
+        <a href="#examples">Query Gallery</a>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- Overview -->
+      <div class="ref-section" id="overview">
+        <span class="section-badge">Overview</span>
+        <h2>DSL Reference</h2>
+        <p>SN-Viz uses a <strong>pipe-delimited, key=value query language</strong> to describe what data to fetch and
+          how to visualize it. Each query is a single line of clauses separated by <span class="inline-code">|</span>.
+        </p>
+
+        <div class="code-block">
+          <span class="kw">table</span>=<span class="val">incident</span> <span class="op">|</span> <span
+            class="kw">filter</span>=<span class="val">active=true</span> <span class="op">|</span> <span
+            class="kw">stat</span>=<span class="val">COUNT</span> <span class="op">|</span> <span
+            class="kw">by</span>=<span class="val">category</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">bar</span>
+        </div>
+
+        <p>Only <span class="inline-code">table=</span> is required. All other parameters are optional and have sensible
+          defaults. Clauses can be written in any order.</p>
+
+        <div class="alert alert-tip">
+          <strong>Tip:</strong> Press <strong>Ctrl+Enter</strong> inside any query box to execute immediately. Use <span
+            class="inline-code">/viz</span> on any ServiceNow list to open SN-Viz with that table pre-filled, or <span
+            class="inline-code">/viz generate</span> to auto-build visuals from the current list context.
+        </div>
+      </div>
+
+      <!-- Anatomy -->
+      <div class="ref-section" id="anatomy">
+        <h3>Query Anatomy</h3>
+        <p>Each clause has the form <span class="inline-code">key=value</span>. Whitespace around <span
+            class="inline-code">|</span> and <span class="inline-code">=</span> is ignored. Keys are case-insensitive.
+        </p>
+        <div class="code-block">
+          <span class="cm">&#x23; Minimal — table only, shows total count as a gauge</span>
+          <span class="kw">table</span>=<span class="val">incident</span>
+
+          <span class="cm">&#x23; Group by one field</span>
+          <span class="kw">table</span>=<span class="val">incident</span> <span class="op">|</span> <span
+            class="kw">stat</span>=<span class="val">COUNT</span> <span class="op">|</span> <span
+            class="kw">by</span>=<span class="val">priority</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">pie</span>
+
+          <span class="cm">&#x23; Two dimensions, stacked bar, limit each axis</span>
+          <span class="kw">table</span>=<span class="val">incident</span> <span class="op">|</span> <span
+            class="kw">by</span>=<span class="val">category</span> <span class="op">|</span> <span
+            class="kw">by2</span>=<span class="val">state</span> <span class="op">|</span> <span
+            class="kw">limit</span>=<span class="val">6</span> <span class="op">|</span> <span
+            class="kw">limit2</span>=<span class="val">4</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">bar</span>
+
+          <span class="cm">&#x23; Time trend with a date field</span>
+          <span class="kw">table</span>=<span class="val">change_request</span> <span class="op">|</span> <span
+            class="kw">trend</span>=<span class="val">opened_at BY month</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">area</span>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- All parameters table -->
+      <div class="ref-section" id="param-table">
+        <h3>All Parameters</h3>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Values</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">table=</span> </td>
+              <td><span class="vals">any SN table name</span></td>
+              <td class="desc">&mdash;</td>
+              <td class="desc">ServiceNow table to query (e.g. <span class="inline-code">incident</span>, <span
+                  class="inline-code">change_request</span>)</td>
+            </tr>
+            <tr>
+              <td><span class="mono">filter=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">SN encoded query string</span></td>
+              <td class="desc">none (all records)</td>
+              <td class="desc">ServiceNow filter string using standard operators. Supports <span
+                  class="inline-code">^</span> (AND) and <span class="inline-code">^OR</span> (OR).</td>
+            </tr>
+            <tr>
+              <td><span class="mono">stat=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">COUNT | AVG(field) | SUM(field) | MIN(field) | MAX(field)</span></td>
+              <td class="desc">COUNT</td>
+              <td class="desc">Aggregate function. For AVG/SUM/MIN/MAX, the field name is required inside parentheses.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="mono">by=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">field name (dot-walk supported)</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Primary group-by field. Supports comma-separated multiple fields (deprecated &mdash; use
+                <span class="inline-code">by2=</span> for 2D). Maps to the X-axis on bar charts.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="mono">by2=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">field name</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Second group-by field creating a 2D matrix. Maps to the series/legend (colors) on bar
+                charts, and Y-axis on heatmaps.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">trend=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">field BY day|week|month|quarter|year</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Time-series grouping on a date field. Produces a line or area chart automatically.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">bucket=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">field [range1, range2, ...]</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Groups records into numeric ranges. Each bucket produces one bar. See Bucket Ranges
+                section below.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">viz=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">bar|pie|donut|line|area|heatmap|scatter|treemap|gauge|number|table|auto</span></td>
+              <td class="desc">auto</td>
+              <td class="desc">Explicit chart type. With <span class="inline-code">auto</span>, SN-Viz picks the best
+                type based on your data shape.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">sort=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">asc | desc</span></td>
+              <td class="desc">desc</td>
+              <td class="desc">Sort direction for grouped results. Sorts by the stat value.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">limit=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">positive integer</span></td>
+              <td class="desc">none (all)</td>
+              <td class="desc">Max number of groups to display from the primary grouping (<span
+                  class="inline-code">by=</span>). Groups are sorted by total value before slicing.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">limit2=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">positive integer</span></td>
+              <td class="desc">none (all)</td>
+              <td class="desc">Max number of groups from the secondary grouping (<span class="inline-code">by2=</span>).
+                Only applicable when <span class="inline-code">by2=</span> is set.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">target=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">numeric value</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Draws a red dashed horizontal target/threshold line on bar, line, and area charts.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">having=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">AGG^FIELD^OP^VALUE</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Post-aggregation filter (like SQL HAVING). Filters groups after stats are computed.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">label=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">any text</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Sets the panel title. Overwrites the editable panel heading when the query is executed.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="mono">drilldown=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">true | false</span></td>
+              <td class="desc">true</td>
+              <td class="desc">Enable or disable click-to-drilldown navigation. When enabled, clicking a data point
+                opens a filtered ServiceNow list.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">from=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">date string (YYYY-MM-DD or relative)</span></td>
+              <td class="desc">none</td>
+              <td class="desc">Start of the date window. Applies a filter on <span class="inline-code">datefield</span>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="mono">to=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">date string</span></td>
+              <td class="desc">none</td>
+              <td class="desc">End of the date window. Used with <span class="inline-code">from=</span>.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">datefield=</span> <span class="opt-badge">Optional</span></td>
+              <td><span class="vals">any date field name</span></td>
+              <td class="desc">sys_created_on</td>
+              <td class="desc">Which date field to apply <span class="inline-code">from=</span>/<span
+                  class="inline-code">to=</span> filters on. Also used as the default field for trend queries.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- filter -->
+      <div class="ref-section" id="param-filter">
+        <h3>filter=</h3>
+        <p>Accepts a <strong>ServiceNow encoded query string</strong> &mdash; the same format used in SN list views. Use
+          <span class="inline-code">^</span> for AND, <span class="inline-code">^OR</span> for OR, and standard SN field
+          operators.
+        </p>
+
+        <div class="example-label">Common operators</div>
+        <table class="having-table">
+          <tr>
+            <td>=</td>
+            <td>Equals</td>
+          </tr>
+          <tr>
+            <td>!=</td>
+            <td>Not equals</td>
+          </tr>
+          <tr>
+            <td>CONTAINS</td>
+            <td>Contains (LIKE)</td>
+          </tr>
+          <tr>
+            <td>STARTSWITH</td>
+            <td>Starts with</td>
+          </tr>
+          <tr>
+            <td>ISEMPTY / ISNOTEMPTY</td>
+            <td>Is/Is not empty</td>
+          </tr>
+          <tr>
+            <td>IN</td>
+            <td>In list (comma-separated values)</td>
+          </tr>
+          <tr>
+            <td><span class="no-lig">!=</span></td>
+            <td>Not equals</td>
+          </tr>
+          <tr>
+            <td>&gt; / &lt; / &gt;= / &lt;=</td>
+            <td>Numeric or date comparison</td>
+          </tr>
+        </table>
+        <div class="code-block">
+          <span class="kw">filter</span>=<span class="val">active=true^priority=1^category=network</span>
+          <span class="kw">filter</span>=<span class="val">state!=6^assigned_toISNOTEMPTY</span>
+          <span class="kw">filter</span>=<span class="val">priority=1^ORpriority=2</span>
+        </div>
+      </div>
+
+      <!-- stat -->
+      <div class="ref-section" id="param-stat">
+        <h3>stat=</h3>
+        <p>Defines the aggregate function applied to each group. Default is <span class="inline-code">COUNT</span>.</p>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Value</th>
+              <th>Description</th>
+              <th>Requires field</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">COUNT</td>
+              <td class="desc">Count of records in each group</td>
+              <td class="desc">No</td>
+            </tr>
+            <tr>
+              <td class="mono">AVG(field)</td>
+              <td class="desc">Average value of field across each group</td>
+              <td class="desc">Yes</td>
+            </tr>
+            <tr>
+              <td class="mono">SUM(field)</td>
+              <td class="desc">Sum of field values across each group</td>
+              <td class="desc">Yes</td>
+            </tr>
+            <tr>
+              <td class="mono">MIN(field)</td>
+              <td class="desc">Minimum field value in each group</td>
+              <td class="desc">Yes</td>
+            </tr>
+            <tr>
+              <td class="mono">MAX(field)</td>
+              <td class="desc">Maximum field value in each group</td>
+              <td class="desc">Yes</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <span class="kw">stat</span>=<span class="val">COUNT</span>
+          <span class="kw">stat</span>=<span class="val">AVG(reopen_count)</span>
+          <span class="kw">stat</span>=<span class="val">SUM(business_duration)</span>
+        </div>
+      </div>
+
+      <!-- by / by2 -->
+      <div class="ref-section" id="param-by">
+        <h3>by= and by2=</h3>
+        <p><span class="inline-code">by=</span> is the <strong>primary group-by field</strong>. It maps to the X-axis on
+          bar charts, and to the primary dimension on heatmaps and scatter plots.</p>
+        <p><span class="inline-code">by2=</span> is the <strong>secondary group-by field</strong>. It creates a 2D
+          matrix, mapping to the legend/color series on bar charts, and to the Y-axis on heatmaps.</p>
+        <div class="alert alert-note"><strong>Note:</strong> Both <span class="inline-code">by=</span> and <span
+            class="inline-code">by2=</span> support dot-walk syntax &mdash; you can traverse reference fields (e.g.
+          <span class="inline-code">by=assigned_to.department</span>).
+        </div>
+        <div class="code-block">
+          <span class="cm">&#x23; 1D — simple bar by category</span>
+          <span class="kw">by</span>=<span class="val">category</span>
+
+          <span class="cm">&#x23; 2D — category on X-axis, state as stacked colors</span>
+          <span class="kw">by</span>=<span class="val">category</span> <span class="op">|</span> <span
+            class="kw">by2</span>=<span class="val">state</span>
+
+          <span class="cm">&#x23; Dot-walk — group by the assignment group's manager</span>
+          <span class="kw">by</span>=<span class="val">assignment_group.manager.name</span>
+        </div>
+      </div>
+
+      <!-- trend -->
+      <div class="ref-section" id="param-trend">
+        <h3>trend=</h3>
+        <p>Groups results by a <strong>date field over time</strong> into equal-width buckets. Produces a line or area
+          chart. Add <span class="inline-code">by=</span> to split into multiple series &mdash; one line per group
+          value.</p>
+        <p>Syntax: <span class="inline-code">trend=&lt;date_field&gt; BY &lt;interval&gt;</span></p>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Interval</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">day</td>
+              <td class="desc">One bucket per calendar day</td>
+            </tr>
+            <tr>
+              <td class="mono">week</td>
+              <td class="desc">One bucket per week (Mon&ndash;Sun)</td>
+            </tr>
+            <tr>
+              <td class="mono">month</td>
+              <td class="desc">One bucket per calendar month</td>
+            </tr>
+            <tr>
+              <td class="mono">quarter</td>
+              <td class="desc">One bucket per fiscal quarter</td>
+            </tr>
+            <tr>
+              <td class="mono">year</td>
+              <td class="desc">One bucket per year</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="code-block">
+          <span class="kw">trend</span>=<span class="val">opened_at BY month</span>
+          <span class="kw">trend</span>=<span class="val">sys_created_on BY week</span>
+
+          <span class="cm">&#x23; Multi-series: one line per category</span>
+          <span class="kw">trend</span>=<span class="val">opened_at BY month</span> <span class="op">|</span> <span
+            class="kw">by</span>=<span class="val">category</span> <span class="op">|</span> <span
+            class="kw">limit</span>=<span class="val">4</span>
+        </div>
+      </div>
+
+      <!-- bucket -->
+      <div class="ref-section" id="param-bucket">
+        <h3>bucket=</h3>
+        <p>Groups numeric field values into <strong>custom ranges</strong>. Each range becomes one bar. Cannot be
+          combined with <span class="inline-code">by=</span> or <span class="inline-code">trend=</span>.</p>
+        <p>Syntax: <span class="inline-code">bucket=&lt;field&gt; [range1, range2, ...]</span></p>
+
+        <div id="advanced-bucket"></div>
+        <div class="example-label">Range Syntax</div>
+        <div class="bucket-examples">
+          <div class="bucket-ex">0 - 100<small>Inclusive range: 0 &le; x &le; 100</small></div>
+          <div class="bucket-ex">&gt;100<small>Greater than 100 (unbounded high)</small></div>
+          <div class="bucket-ex">&lt;=0<small>Less than or equal to 0</small></div>
+          <div class="bucket-ex">&gt;=200<small>Greater than or equal to 200</small></div>
+        </div>
+        <div class="code-block">
+          <span class="kw">bucket</span>=<span class="val">reopen_count [0, 1, 2 - 5, &gt;5]</span>
+          <span class="kw">bucket</span>=<span class="val">business_duration [&lt;=60, 61 - 480, &gt;480]</span>
+        </div>
+      </div>
+
+      <!-- viz -->
+      <div class="ref-section" id="param-viz">
+        <h3>viz=</h3>
+        <p>Selects the chart type. When set to <span class="inline-code">auto</span> (default), SN-Viz picks the best
+          type based on your data shape.</p>
+
+        <div id="viz-types"></div>
+        <div class="viz-grid">
+          <div class="viz-card">
+            <div class="vc-name">Bar</div>
+            <div class="vc-key">viz=bar</div>
+            <div class="vc-desc">Vertical bars. Stacked when <span class="inline-code">by2=</span> is set. Supports
+              <span class="inline-code">target=</span>.
+            </div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Pie</div>
+            <div class="vc-key">viz=pie</div>
+            <div class="vc-desc">Full-circle proportional chart. Good for &le;8 categories.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Donut</div>
+            <div class="vc-key">viz=donut</div>
+            <div class="vc-desc">Pie with a hollow center. Same rules as pie.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Line</div>
+            <div class="vc-key">viz=line</div>
+            <div class="vc-desc">Continuous line chart. Best for trend data.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Area</div>
+            <div class="vc-key">viz=area</div>
+            <div class="vc-desc">Line chart with filled area. Best for single-series trends.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Heatmap</div>
+            <div class="vc-key">viz=heatmap</div>
+            <div class="vc-desc">2D grid with color intensity. Requires <span class="inline-code">by=</span> and <span
+                class="inline-code">by2=</span>.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Scatter</div>
+            <div class="vc-key">viz=scatter</div>
+            <div class="vc-desc">Bubble/dot plot. Requires <span class="inline-code">by=</span> and <span
+                class="inline-code">by2=</span>. Click dots to drilldown.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Treemap</div>
+            <div class="vc-key">viz=treemap</div>
+            <div class="vc-desc">Nested rectangles proportional to value.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Gauge</div>
+            <div class="vc-key">viz=gauge</div>
+            <div class="vc-desc">Dial gauge. Best when no grouping is set.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Number</div>
+            <div class="vc-key">viz=number</div>
+            <div class="vc-desc">Big number KPI card. Shows the total stat value.</div>
+          </div>
+          <div class="viz-card">
+            <div class="vc-name">Table</div>
+            <div class="vc-key">viz=table</div>
+            <div class="vc-desc">Tabular view of grouped results. Scrollable, no chart.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- limit / limit2 -->
+      <div class="ref-section" id="param-limit">
+        <h3>limit= and limit2=</h3>
+        <p><span class="inline-code">limit=</span> controls the maximum number of groups shown from the <strong>primary
+            dimension</strong> (<span class="inline-code">by=</span>). <span class="inline-code">limit2=</span> controls
+          the secondary dimension (<span class="inline-code">by2=</span>).</p>
+        <p>Groups are <strong>ranked by total value descending</strong> before slicing &mdash; so you always see the top
+          N by volume.</p>
+        <div class="code-block">
+          <span class="cm">&#x23; Top 5 categories, top 3 states as stack colors</span>
+          <span class="kw">by</span>=<span class="val">category</span> <span class="op">|</span> <span
+            class="kw">by2</span>=<span class="val">state</span> <span class="op">|</span> <span
+            class="kw">limit</span>=<span class="val">5</span> <span class="op">|</span> <span
+            class="kw">limit2</span>=<span class="val">3</span>
+        </div>
+      </div>
+
+      <!-- target -->
+      <div class="ref-section" id="param-target">
+        <h3>target=</h3>
+        <p>Adds a <strong>red dashed horizontal line</strong> to bar, line, and area charts at the specified numeric
+          value. Useful for SLA thresholds or KPI goals.</p>
+        <div class="code-block">
+          <span class="kw">table</span>=<span class="val">incident</span> <span class="op">|</span> <span
+            class="kw">stat</span>=<span class="val">COUNT</span> <span class="op">|</span> <span
+            class="kw">by</span>=<span class="val">assignment_group</span> <span class="op">|</span> <span
+            class="kw">target</span>=<span class="val">50</span>
+        </div>
+      </div>
+
+      <!-- having -->
+      <div class="ref-section" id="param-having">
+        <h3>having=</h3>
+        <div id="advanced-having"></div>
+        <p>Filters groups <em>after</em> aggregation &mdash; equivalent to SQL's HAVING clause. Format: <span
+            class="inline-code">AGGREGATE^FIELD^OPERATOR^VALUE</span></p>
+        <table class="having-table">
+          <tr>
+            <td>AGGREGATE</td>
+            <td>The stat: <span class="inline-code">count</span>, <span class="inline-code">avg</span>, <span
+                class="inline-code">sum</span>, etc.</td>
+          </tr>
+          <tr>
+            <td>FIELD</td>
+            <td>The groupby field name (e.g. <span class="inline-code">category</span>)</td>
+          </tr>
+          <tr>
+            <td>OPERATOR</td>
+            <td><span class="inline-code">&gt;</span>, <span class="inline-code">&lt;</span>, <span
+                class="inline-code">=</span>, <span class="inline-code">!=</span>, <span
+                class="inline-code">&gt;=</span>, <span class="inline-code">&lt;=</span></td>
+          </tr>
+          <tr>
+            <td>VALUE</td>
+            <td>Numeric threshold value</td>
+          </tr>
+        </table>
+        <div class="code-block">
+          <span class="cm">&#x23; Only show assignment groups with more than 50 incidents</span>
+          <span class="kw">having</span>=<span class="val">count^assignment_group^&gt;^50</span>
+        </div>
+      </div>
+
+      <!-- label -->
+      <div class="ref-section" id="param-label">
+        <h3>label=</h3>
+        <p>Sets the panel title text when the query is executed. Overwrites the default "New Panel" heading. Useful when
+          building dashboard layouts that need clear titles.</p>
+        <div class="code-block">
+          <span class="kw">label</span>=<span class="val">Active Incidents by Priority</span>
+        </div>
+      </div>
+
+      <!-- drilldown -->
+      <div class="ref-section" id="param-drilldown">
+        <h3>drilldown=</h3>
+        <p>Controls whether clicking a chart element navigates to a filtered ServiceNow list. Default is <span
+            class="inline-code">true</span>. Set to <span class="inline-code">false</span> to disable.</p>
+        <p>When enabled, clicking a bar, pie slice, scatter dot, or other element appends the clicked group value as a
+          filter to the base query and opens the matching list view in ServiceNow.</p>
+        <div class="alert alert-note"><strong>Note:</strong> Drilldown is supported on all chart types. Heatmap and
+          Scatter drilldown require both <span class="inline-code">by=</span> and <span class="inline-code">by2=</span>
+          to be set.</div>
+      </div>
+
+      <!-- dates -->
+      <div class="ref-section" id="param-dates">
+        <h3>from= / to= / datefield=</h3>
+        <p>These three parameters define a <strong>date window filter</strong> applied on top of the query. Typically
+          set via the panel's Date Window dialog rather than typed manually.</p>
+        <table class="param-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">from=</td>
+              <td class="desc">Start date. Accepts YYYY-MM-DD or ServiceNow relative date formats.</td>
+            </tr>
+            <tr>
+              <td class="mono">to=</td>
+              <td class="desc">End date. Used with <span class="inline-code">from=</span>.</td>
+            </tr>
+            <tr>
+              <td class="mono">datefield=</td>
+              <td class="desc">Date field to filter on. Defaults to <span class="inline-code">sys_created_on</span>.
+                Also used as the default for trend queries.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr>
+
+      <!-- Advanced: Dot-walking -->
+      <div class="ref-section" id="advanced-dotwalk">
+        <h3>Dot-walking Fields</h3>
+        <p>Any field in <span class="inline-code">by=</span>, <span class="inline-code">by2=</span>, <span
+            class="inline-code">stat=(field)</span>, <span class="inline-code">bucket=(field)</span>, and <span
+            class="inline-code">filter=</span> can traverse reference fields using dot notation. As you type,
+          autocomplete suggestions follow the chain and show fields on the referenced table.</p>
+        <div class="code-block">
+          <span class="cm">&#x23; Group by the caller's department name</span>
+          <span class="kw">by</span>=<span class="val">caller_id.department.name</span>
+
+          <span class="cm">&#x23; Group by the assignment group's manager location</span>
+          <span class="kw">by</span>=<span class="val">assignment_group.manager.location.name</span>
+        </div>
+      </div>
+
+      <!-- Advanced: 2D charts -->
+      <div class="ref-section" id="advanced-2d">
+        <h3>2D Charts with by= and by2=</h3>
+        <p>When both <span class="inline-code">by=</span> and <span class="inline-code">by2=</span> are set, SN-Viz
+          builds a 2D matrix from the two fields:</p>
+        <ul style="color:var(--muted-fg);margin-left:20px;margin-bottom:16px;line-height:2">
+          <li><strong style="color:var(--fg)">Bar chart:</strong> <span class="inline-code">by=</span> &rarr; X-axis
+            labels, <span class="inline-code">by2=</span> &rarr; stacked color series (legend)</li>
+          <li><strong style="color:var(--fg)">Heatmap:</strong> <span class="inline-code">by=</span> &rarr; X-axis,
+            <span class="inline-code">by2=</span> &rarr; Y-axis rows
+          </li>
+          <li><strong style="color:var(--fg)">Scatter:</strong> <span class="inline-code">by=</span> &rarr; X-axis,
+            <span class="inline-code">by2=</span> &rarr; legend groups
+          </li>
+        </ul>
+        <div class="alert alert-tip"><strong>Tip:</strong> Swapping <span class="inline-code">by=</span> and <span
+            class="inline-code">by2=</span> in your query pivots the chart axes. Use <span
+            class="inline-code">limit=</span> and <span class="inline-code">limit2=</span> to control how many groups
+          appear on each axis.</div>
+      </div>
+
+      <hr>
+
+      <!-- Examples gallery -->
+      <div class="ref-section" id="examples">
+        <h3>Query Gallery</h3>
+        <p>Copy any of these to get started immediately. All use the <span class="inline-code">incident</span> table
+          which is universally present in ServiceNow instances.</p>
+
+        <div class="example-label">Basic &mdash; Count by priority</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">filter</span>=<span class="val">active=true</span> <span
+            class="op">|</span> <span class="kw">stat</span>=<span class="val">COUNT</span> <span class="op">|</span>
+          <span class="kw">by</span>=<span class="val">priority</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">pie</span>
+        </div>
+
+        <div class="example-label">Stacked bar &mdash; Top 6 categories by 4 states</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">stat</span>=<span class="val">COUNT</span> <span class="op">|</span>
+          <span class="kw">by</span>=<span class="val">category</span> <span class="op">|</span> <span
+            class="kw">by2</span>=<span class="val">state</span> <span class="op">|</span> <span
+            class="kw">limit</span>=<span class="val">6</span> <span class="op">|</span> <span
+            class="kw">limit2</span>=<span class="val">4</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">bar</span>
+        </div>
+
+        <div class="example-label">Heatmap &mdash; Assignment group vs priority</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">filter</span>=<span class="val">active=true</span> <span
+            class="op">|</span> <span class="kw">by</span>=<span class="val">assignment_group</span> <span
+            class="op">|</span> <span class="kw">by2</span>=<span class="val">priority</span> <span class="op">|</span>
+          <span class="kw">limit</span>=<span class="val">8</span> <span class="op">|</span> <span
+            class="kw">limit2</span>=<span class="val">5</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">heatmap</span>
+        </div>
+
+        <div class="example-label">Time trend &mdash; Monthly incident volume</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">trend</span>=<span class="val">opened_at BY month</span> <span
+            class="op">|</span> <span class="kw">viz</span>=<span class="val">area</span></div>
+
+        <div class="example-label">Multi-series trend &mdash; Volume by category over time</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">trend</span>=<span class="val">opened_at BY month</span> <span
+            class="op">|</span> <span class="kw">by</span>=<span class="val">category</span> <span class="op">|</span>
+          <span class="kw">limit</span>=<span class="val">4</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">line</span>
+        </div>
+
+        <div class="example-label">Average reopen count &mdash; Top close codes</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">filter</span>=<span class="val">active=false</span> <span
+            class="op">|</span> <span class="kw">stat</span>=<span class="val">AVG(reopen_count)</span> <span
+            class="op">|</span> <span class="kw">by</span>=<span class="val">close_code</span> <span class="op">|</span>
+          <span class="kw">limit</span>=<span class="val">8</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">bar</span>
+        </div>
+
+        <div class="example-label">Bucket &mdash; Reopen count distribution</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">bucket</span>=<span class="val">reopen_count [0, 1, 2 - 5,
+            &gt;5]</span></div>
+
+        <div class="example-label">HAVING &mdash; Groups with more than 30 incidents</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">by</span>=<span class="val">category</span> <span class="op">|</span>
+          <span class="kw">having</span>=<span class="val">count^category^&gt;^30</span>
+        </div>
+
+        <div class="example-label">KPI number &mdash; Total open P1 incidents</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">filter</span>=<span class="val">active=true^priority=1</span> <span
+            class="op">|</span> <span class="kw">stat</span>=<span class="val">COUNT</span> <span class="op">|</span>
+          <span class="kw">viz</span>=<span class="val">number</span> <span class="op">|</span> <span
+            class="kw">label</span>=<span class="val">Open P1 Incidents</span>
+        </div>
+
+        <div class="example-label">Dot-walk &mdash; Incidents by caller department</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">by</span>=<span class="val">caller_id.department.name</span> <span
+            class="op">|</span> <span class="kw">limit</span>=<span class="val">10</span> <span class="op">|</span>
+          <span class="kw">viz</span>=<span class="val">bar</span>
+        </div>
+
+        <div class="example-label">Target line &mdash; SLA threshold at 100</div>
+        <div class="code-block"><span class="kw">table</span>=<span class="val">incident</span> <span
+            class="op">|</span> <span class="kw">filter</span>=<span class="val">active=true</span> <span
+            class="op">|</span> <span class="kw">by</span>=<span class="val">assignment_group</span> <span
+            class="op">|</span> <span class="kw">limit</span>=<span class="val">8</span> <span class="op">|</span> <span
+            class="kw">target</span>=<span class="val">100</span> <span class="op">|</span> <span
+            class="kw">viz</span>=<span class="val">bar</span></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Normalize code-block indentation — strips leading whitespace caused by HTML formatting
+    // so the rendered output is always clean regardless of IDE auto-format
+    document.querySelectorAll('.code-block').forEach(function (block) {
+      // Step 1: re-join HTML attributes the IDE wrapped onto new lines
+      // e.g. `<span\n    class="op">` → `<span class="op">`
+      var html = block.innerHTML.replace(/\n[ \t]*(class=)/g, ' $1');
+
+      // Step 2: strip common indentation
+      var lines = html.split('\n');
+      var minIndent = Infinity;
+      lines.forEach(function (line) {
+        if (line.trim().length > 0) {
+          var indent = line.match(/^([ \t]*)/)[1].length;
+          if (indent < minIndent) minIndent = indent;
+        }
+      });
+      if (!isFinite(minIndent)) minIndent = 0;
+      lines = lines.map(function (line) { return line.slice(minIndent); });
+
+      // Step 3: re-join HTML word-wrap continuation lines.
+      // A line is a wrap artifact when it starts with a non-comment <span>
+      // AND the previous line was also non-comment code (not cm).
+      // Blank lines and comment→code transitions are always kept.
+      var result = [];
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        var trimmed = line.trim();
+        if (!trimmed) { result.push(''); continue; }
+        var prev = result.length > 0 ? result[result.length - 1] : '';
+        var isContinuation = (
+          /^<span(?! class="cm")/.test(trimmed) ||   // span tag wrap
+          (trimmed.length > 0 && trimmed[0] !== '<') // span value wrap (e.g. &gt;5]</span>)
+        )
+          && prev.trim()
+          && prev.indexOf('class="cm"') === -1;
+        if (isContinuation) {
+          result[result.length - 1] = prev + ' ' + trimmed;
+        } else {
+          result.push(line);
+        }
+      }
+
+      // Drop leading/trailing blank lines
+      while (result.length && !result[0].trim()) result.shift();
+      while (result.length && !result[result.length - 1].trim()) result.pop();
+      block.innerHTML = result.join('\n');
+    });
+
+    // Sidebar active link on scroll
+    var sections = document.querySelectorAll('.ref-section');
+    var links = document.querySelectorAll('.sidebar a');
+    window.addEventListener('scroll', function () {
+      var scrollY = window.scrollY + 80;
+      sections.forEach(function (sec) {
+        if (sec.offsetTop <= scrollY && sec.offsetTop + sec.offsetHeight > scrollY) {
+          links.forEach(function (l) { l.classList.remove('active'); });
+          var match = document.querySelector('.sidebar a[href="#' + sec.id + '"]');
+          if (match) match.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
