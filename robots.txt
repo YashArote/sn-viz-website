@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://snviz.com/sitemap.xml
