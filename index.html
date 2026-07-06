@@ -64,9 +64,15 @@
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Non-blocking font load — eliminates render-blocking CSS request -->
+  <link rel="preload" as="style"
     href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet">
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+  </noscript>
   <script type="text/javascript">
     (function (c, l, a, r, i, t, y) {
       c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
@@ -978,7 +984,11 @@
           <span style="font-family:var(--font-m);font-size:11px;color:var(--muted-fg);margin-left:8px">SN-Viz
             Dashboard</span>
         </div>
-        <img src="images/screenshots/dashboard-0.png" alt="SN-Viz 4-panel analytics dashboard">
+        <img src="images/screenshots/dashboard-0.webp"
+             srcset="images/screenshots/dashboard-0.webp"
+             alt="SN-Viz 4-panel analytics dashboard"
+             fetchpriority="high" decoding="async"
+             width="1296" height="999">
         <div class="hero-img-overlay"></div>
         <button class="hero-expand-btn"
           onclick="openLightbox('images/screenshots/dashboard-0.png','SN-Viz Dashboard')">&#x2922; Expand</button>
@@ -1018,12 +1028,18 @@
         <div class="ss-wrap feat-media">
           <div class="ss-pair">
             <div class="ss-card" onclick="openLightbox('images/screenshots/slash-1.png','/viz in SN-Utils')">
-              <img src="images/screenshots/slash-1.png" alt="/viz typed in SN-Utils integrated view">
+              <picture>
+                <source srcset="images/screenshots/slash-1.webp" type="image/webp">
+                <img src="images/screenshots/slash-1.png" alt="/viz typed in SN-Utils integrated view" loading="lazy" width="626" height="595">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">/viz &mdash; SN-Utils integrated</div>
             </div>
             <div class="ss-card" onclick="openLightbox('images/screenshots/slash-2.png','/viz in native SN')">
-              <img src="images/screenshots/slash-2.png" alt="/viz typed in native ServiceNow list">
+              <picture>
+                <source srcset="images/screenshots/slash-2.webp" type="image/webp">
+                <img src="images/screenshots/slash-2.png" alt="/viz typed in native ServiceNow list" loading="lazy" width="748" height="260">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">/viz &mdash; native SN list</div>
             </div>
@@ -1056,12 +1072,18 @@
         <div class="feat-media ss-wrap">
           <div class="ss-pair">
             <div class="ss-card" onclick="openLightbox('images/screenshots/DSL-manual-3.png','Manual DSL query')">
-              <img src="images/screenshots/DSL-manual-3.png" alt="Panel showing DSL query and resulting chart">
+              <picture>
+                <source srcset="images/screenshots/DSL-manual-3.webp" type="image/webp">
+                <img src="images/screenshots/DSL-manual-3.png" alt="Panel showing DSL query and resulting chart" loading="lazy" width="906" height="610">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">Manual DSL + chart result</div>
             </div>
             <div class="ss-card" onclick="openLightbox('images/screenshots/DSL-visual-4.png','Visual Editor')">
-              <img src="images/screenshots/DSL-visual-4.png" alt="Visual editor panel open with dropdowns">
+              <picture>
+                <source srcset="images/screenshots/DSL-visual-4.webp" type="image/webp">
+                <img src="images/screenshots/DSL-visual-4.png" alt="Visual editor panel open with dropdowns" loading="lazy" width="766" height="721">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">Visual Editor</div>
             </div>
@@ -1084,12 +1106,18 @@
         <div class="ss-wrap feat-media">
           <div class="ss-pair">
             <div class="ss-card" onclick="openLightbox('images/screenshots/RLC-5.png','RLC Visual Editor')">
-              <img src="images/screenshots/RLC-5.png" alt="RLC Visual Editor showing related list context filter">
+              <picture>
+                <source srcset="images/screenshots/RLC-5.webp" type="image/webp">
+                <img src="images/screenshots/RLC-5.png" alt="RLC Visual Editor showing related list context filter" loading="lazy" width="804" height="698">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">RLC Visual Editor</div>
             </div>
             <div class="ss-card" onclick="openLightbox('images/screenshots/DrillDown-6.png','Drilldown hover')">
-              <img src="images/screenshots/DrillDown-6.png" alt="Chart with hover tooltip showing drilldown">
+              <picture>
+                <source srcset="images/screenshots/DrillDown-6.webp" type="image/webp">
+                <img src="images/screenshots/DrillDown-6.png" alt="Chart with hover tooltip showing drilldown" loading="lazy" width="682" height="439">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">Hover &amp; drilldown</div>
             </div>
@@ -1113,14 +1141,20 @@
           <div class="ss-pair">
             <div class="ss-card"
               onclick="openLightbox('images/screenshots/dot-walk-autocom-manual-7.png','Dot-walk in DSL editor')">
-              <img src="images/screenshots/dot-walk-autocom-manual-7.png"
-                alt="Dot-walk autocomplete in manual DSL query editor">
+              <picture>
+                <source srcset="images/screenshots/dot-walk-autocom-manual-7.webp" type="image/webp">
+                <img src="images/screenshots/dot-walk-autocom-manual-7.png"
+                  alt="Dot-walk autocomplete in manual DSL query editor" loading="lazy" width="673" height="277">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">Dot-walk in DSL editor</div>
             </div>
             <div class="ss-card"
               onclick="openLightbox('images/screenshots/dot-walk-autocom-visual-8.png','Dot-walk in Visual Editor')">
-              <img src="images/screenshots/dot-walk-autocom-visual-8.png" alt="Dot-walk autocomplete in visual editor">
+              <picture>
+                <source srcset="images/screenshots/dot-walk-autocom-visual-8.webp" type="image/webp">
+                <img src="images/screenshots/dot-walk-autocom-visual-8.png" alt="Dot-walk autocomplete in visual editor" loading="lazy" width="675" height="562">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">Dot-walk in Visual Editor</div>
             </div>
@@ -1142,13 +1176,19 @@
         <div class="ss-wrap feat-media">
           <div class="ss-pair">
             <div class="ss-card" onclick="openLightbox('images/screenshots/dashboard-custom-9.png','Custom dashboard')">
-              <img src="images/screenshots/dashboard-custom-9.png" alt="Custom 4-panel SN-Viz dashboard">
+              <picture>
+                <source srcset="images/screenshots/dashboard-custom-9.webp" type="image/webp">
+                <img src="images/screenshots/dashboard-custom-9.png" alt="Custom 4-panel SN-Viz dashboard" loading="lazy" width="1296" height="999">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">4-panel custom dashboard</div>
             </div>
             <div class="ss-card"
               onclick="openLightbox('images/screenshots/dashboard-save-10.png','Save &amp; Export modal')">
-              <img src="images/screenshots/dashboard-save-10.png" alt="Save dashboard modal with JSON export option">
+              <picture>
+                <source srcset="images/screenshots/dashboard-save-10.webp" type="image/webp">
+                <img src="images/screenshots/dashboard-save-10.png" alt="Save dashboard modal with JSON export option" loading="lazy" width="619" height="489">
+              </picture>
               <div class="ss-overlay">&#x2922; Expand</div>
               <div class="ss-caption">Save &amp; Export JSON</div>
             </div>
